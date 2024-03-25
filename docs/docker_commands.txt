@@ -1,0 +1,8 @@
+docker build -t prediction-system:latest .
+docker run --network="host" -d -p 8440:8440 -p 8441:8441 --name prediction-container prediction-system:latest
+docker logs prediction-container
+docker stop prediction-container
+docker rm prediction-container
+
+docker logs prediction-container
+

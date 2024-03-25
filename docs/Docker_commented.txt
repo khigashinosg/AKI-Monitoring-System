@@ -1,0 +1,30 @@
+# Use Ubuntu Jammy as the base image
+FROM ubuntu:jammy
+
+# Install Python and any other necessary packages
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -yq install python3 python3-pip
+
+# Copy necessary files to the container
+COPY simulator.py /simulator/
+COPY simulator_test.py /simulator/
+COPY prediction_system.py /simulator/
+COPY trained_model.pkl /simulator/
+COPY messages.mllp /data/
+
+# Set the working directory to /simulator
+WORKDIR /simulator
+
+# Run tests (if simulator_test.py is executable and has a proper shebang line)
+RUN ./simulator_test.py
+
+# If prediction_system.py requires external libraries, install them
+# Example: RUN pip3 install numpy pandas scikit-learn
+
+# Expose necessary ports
+EXPOSE 8440
+EXPOSE 8441
+
+# Command to run the simulator and then prediction_system.py
+# Assuming prediction_system.py is designed to run continuously or perform a task and exit
+# If it needs to be invoked differently, adjust the CMD accordingly
+CMD ./simulator.py --messages=/data/messages.mllp && python3 prediction_system.py

@@ -1,0 +1,3 @@
+kubectl -n devesa delete deployment aki-detection
+kubectl apply -f coursework4.yaml
+kubectl --namespace=devesa get pod

@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aki-detection-state
+  namespace: devesa
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aki-detection
+  namespace: devesa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aki-detection
+  template:
+    metadata:
+      labels:
+        app: aki-detection
+    spec:
+      containers:
+      - name: aki-detection
+        image: imperialswemlsspring2024.azurecr.io/coursework4-devesa
+        command: ["python3"] 
+        args: ["prediction_system.py", "--pathname=/data/history.csv"]
+        env:
+        - name: MLLP_ADDRESS
+          value: devesa-simulator.coursework4:8440 # which one we are connecting to 
+        - name: PAGER_ADDRESS
+          value: devesa-simulator.coursework4:8441
+        volumeMounts: ## move to here
+          - mountPath: "/hospital-history"
+            name: hospital-history
+            readOnly: true
+          - mountPath: "/state"  ## move from here
+            name: aki-detection-state
+        resources:
+          requests:
+            memory: 1Gi
+            cpu: 1
+      initContainers:
+      - name: copy-hospital-history
+        image: imperialswemlsspring2024.azurecr.io/coursework5-history
+        volumeMounts:
+          - mountPath: "/hospital-history"
+            name: hospital-history
+        resources:
+          requests:
+            memory: 1Gi
+            cpu: 1
+      volumes:
+      - name: hospital-history
+        emptyDir:
+          sizeLimit: 50Mi
+      - name: aki-detection-state
+        persistentVolumeClaim:
+          claimName: aki-detection-state
