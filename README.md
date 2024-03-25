@@ -1,4 +1,5 @@
-# SWEMLS — AKI Detection Service
+# AKI Detection Service
+AKI Detection Service is a robust machine learning system designed to predict Acute Kidney Injury (AKI) using real-time HL7 message processing. Encapsulated in a Docker container and deployed on Kubernetes, the system utilizes a pre-trained Random Forest model for AKI prediction, offering rapid alerting capabilities for a simulated hospital environment. This project embodies high engineering quality with a focus on scalability, high availability, and compliance with SLAs
 
 This document provides detailed instructions on how to set up, run, and test the AKI Detection Service, a project designed for the reliable detection of Acute Kidney Injury (AKI) using HL7 messages.
 
